@@ -1,33 +1,54 @@
+from flask import Flask
 import speech_recognition as sr
 import keyboard
+from gtts import gTTS
+import os
 
-# Crie um reconhecedor
+app = Flask(__name__)
+
+# Criação de um reconhecedor
 r = sr.Recognizer()
 
 # Lista para armazenar os produtos
 produtos = []
 
-def ouvir_e_armazenar():
-    with sr.Microphone() as source:
-        print("Fale agora. Solte o botão quando terminar.")
-        audio = r.listen(source, phrase_time_limit=5)
+@app.route('/start-speech-recognition', methods=['GET'])
+def start_speech_recognition():
+    global produtos
 
-        try:
-            # Use o Google Speech Recognition para converter a fala em texto
-            produto = r.recognize_google(audio)
-            print("Produto: " + produto)
-            produtos.append(produto)
-        except sr.UnknownValueError:
-            print("Não foi possível entender o áudio")
-        except sr.RequestError as e:
-            print("Erro ao chamar o serviço de reconhecimento de fala; {0}".format(e))
+    def ouvir_e_armazenar():
+        global produtos
+        with sr.Microphone() as source:
+            print("Fale agora. Solte o botão quando terminar.")
+            audio = r.listen(source, phrase_time_limit=5)
 
-def pressionar_tecla():
-    keyboard.on_press_key('enter', lambda _: ouvir_e_armazenar())
-    keyboard.wait('esc')
-    keyboard.unhook_all()
+            try:
+                # Google Speech Recognition para converter a fala em texto
+                produto = r.recognize_google(audio)
+                print("Produto: " + produto)
+                produtos.append(produto)
+            except sr.UnknownValueError:
+                mensagem = "Não foi possível entender o áudio"
+                print(mensagem)
+                tts = gTTS(text=mensagem, lang='pt')
+                tts.save("mensagem.mp3")
+                os.system("afplay mensagem.mp3")  # Isso funciona em sistemas macOS
+            except sr.RequestError as e:
+                mensagem = "Erro ao chamar o serviço de reconhecimento de fala"
+                print(mensagem, e)
+                tts = gTTS(text=mensagem, lang='pt')
+                tts.save("mensagem.mp3")
+                os.system("afplay mensagem.mp3") 
 
-# Pressione 'Enter' para começar a capturar a fala e 'Esc' para parar
-pressionar_tecla()
+    def pressionar_tecla():
+        keyboard.on_press_key('enter', lambda _: ouvir_e_armazenar())
+        keyboard.wait('esc')
+        keyboard.unhook_all()
 
-print("Lista de produtos:", produtos)
+    # Pressione 'Enter' para começar a capturar a fala e 'Esc' para parar
+    pressionar_tecla()
+
+    return "Lista de produtos: " + str(produtos)
+
+if __name__ == '__main__':
+    app.run(debug=True)
