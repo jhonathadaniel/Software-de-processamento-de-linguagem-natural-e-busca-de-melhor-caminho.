@@ -33,14 +33,17 @@ def start_speech_recognition():
                 tts = gTTS(text=mensagem, lang='pt')
                 tts.save("mensagem.mp3")
                 os.system("afplay mensagem.mp3")  # Isso funciona em sistemas macOS
+                #os.system("start mensagem.mp3")  # Windows
             except sr.RequestError as e:
                 mensagem = "Erro ao chamar o serviço de reconhecimento de fala"
                 print(mensagem, e)
                 tts = gTTS(text=mensagem, lang='pt')
                 tts.save("mensagem.mp3")
                 os.system("afplay mensagem.mp3") 
+                #os.system("start mensagem.mp3") 
 
     def pressionar_tecla():
+        # "lambda" argumento para o método on_press_key (gatilho)
         keyboard.on_press_key('enter', lambda _: ouvir_e_armazenar())
         keyboard.wait('esc')
         keyboard.unhook_all()
