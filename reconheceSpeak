@@ -1,0 +1,33 @@
+import speech_recognition as sr
+import keyboard
+
+# Crie um reconhecedor
+r = sr.Recognizer()
+
+# Lista para armazenar os produtos
+produtos = []
+
+def ouvir_e_armazenar():
+    with sr.Microphone() as source:
+        print("Fale agora. Solte o botão quando terminar.")
+        audio = r.listen(source, phrase_time_limit=5)
+
+        try:
+            # Use o Google Speech Recognition para converter a fala em texto
+            produto = r.recognize_google(audio)
+            print("Produto: " + produto)
+            produtos.append(produto)
+        except sr.UnknownValueError:
+            print("Não foi possível entender o áudio")
+        except sr.RequestError as e:
+            print("Erro ao chamar o serviço de reconhecimento de fala; {0}".format(e))
+
+def pressionar_tecla():
+    keyboard.on_press_key('enter', lambda _: ouvir_e_armazenar())
+    keyboard.wait('esc')
+    keyboard.unhook_all()
+
+# Pressione 'Enter' para começar a capturar a fala e 'Esc' para parar
+pressionar_tecla()
+
+print("Lista de produtos:", produtos)
