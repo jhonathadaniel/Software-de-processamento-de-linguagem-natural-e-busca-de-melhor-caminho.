@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reconhecimento de Fala</title>
+</head>
+<body>
+    <button onclick="startRecognition()">Iniciar Reconhecimento de Fala</button>
+    <div id="output"></div>
+
+    <script>
+        function startRecognition() {
+            fetch('/start-speech-recognition') // Envie uma solicitação para o servidor Flask
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('output').innerHTML = data; // Atualize a saída com a resposta do servidor
+            })
+            .catch(error => {
+                console.error('Ocorreu um erro:', error);
+            });
+        }
+    </script>
+</body>
+</html>
