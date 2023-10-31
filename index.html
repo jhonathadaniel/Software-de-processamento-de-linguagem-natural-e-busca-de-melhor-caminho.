@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reconhecimento de Fala</title>
+    <title>Botão de Áudio</title>
 </head>
 <body>
-    <button onclick="startRecognition()">Iniciar Reconhecimento de Fala</button>
-    <div id="output"></div>
+    <button onclick="startListening()">Iniciar Escuta</button>
+    <button onclick="stopListening()">Parar Escuta</button>
+    <button onclick="getPhrases()">Obter Frases</button>
 
     <script>
-        function startRecognition() {
-            fetch('/start-speech-recognition') // Envie uma solicitação para o servidor Flask
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('output').innerHTML = data; // Atualize a saída com a resposta do servidor
+        let phrasesList = [];
+
+        function startListening() {
+            fetch('http://localhost:5000/listen', {
+                method: 'GET'
             })
-            .catch(error => {
-                console.error('Ocorreu um erro:', error);
-            });
+            .then(response => response.json())
+            .then(data => {
+                if (data.frases) {
+                    phrasesList = data.frases;
+                    console.log('Lista de frases atualizada:', phrasesList);
+                } else {
+                    console.log('Nenhuma frase recebida.');
+                }
+            })
+            .catch(error => console.error('Ocorreu um erro:', error));
+        }
+
+        function stopListening() {
+            fetch('http://localhost:5000/stop-listen', {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Servidor parou de escutar:', data);
+            })
+            .catch(error => console.error('Ocorreu um erro:', error));
+        }
+
+        function getPhrases() {
+            console.log('Lista de frases:', phrasesList);
+            // Adicione aqui a lógica adicional para manipular as frases obtidas do servidor
         }
     </script>
 </body>
