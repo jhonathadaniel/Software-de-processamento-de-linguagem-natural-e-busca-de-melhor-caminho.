@@ -5,7 +5,7 @@ def listen_microfone():
     frases = []  # Inicializa a lista vazia para armazenar as frases
 
     with sr.Microphone() as source:
-        microfone.adjust_for_ambient_noise(source, duration=0.8)
+        microfone.adjust_for_ambient_noise(source, duration=1.0)
         print('Ouvindo:')
         audio = microfone.listen(source)
         with open('recordings/speech.wav', 'wb') as f:
