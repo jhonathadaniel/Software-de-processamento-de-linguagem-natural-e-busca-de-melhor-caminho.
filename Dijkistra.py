@@ -1,6 +1,5 @@
 import heapq
 
-
 class Dijkistra:
     def __init__(self):
         self.vertices = set()
@@ -23,18 +22,24 @@ class Dijkistra:
         caminho = {v: [] for v in self.vertices}
 
         while fila:
-            (dist, vertice) = heapq.heappop(fila)
+            try:
+                (dist, vertice) = heapq.heappop(fila)
+            except IndexError:
+                break  # Sai do loop se a fila estiver vazia
+
+            if vertice not in distancia:
+                continue
+
             if dist > distancia[vertice]:
                 continue
 
-            for (vizinho, peso) in self.arestas[vertice]:
+            for (vizinho, peso) in self.arestas.get(vertice, []):
                 if distancia[vertice] + peso < distancia[vizinho]:
                     distancia[vizinho] = distancia[vertice] + peso
                     caminho[vizinho] = caminho[vertice] + [vertice]
                     heapq.heappush(fila, (distancia[vizinho], vizinho))
 
-        return distancia, caminho
-
+        return caminho, distancia
 
 grafo = Dijkistra()
 grafo.adicionar_aresta('A', 'B', 1)
@@ -45,9 +50,7 @@ grafo.adicionar_aresta('C', 'D', 1)
 grafo.adicionar_aresta('D', 'E', 3)
 
 origem = 'A'
-distancias, caminhos = grafo.dijkstra(origem)
+caminhos, distancias = grafo.dijkstra(origem)
 
 for vertice, caminho_para_vertice in caminhos.items():
-    print(
-        f'Melhor caminho de {origem} para {vertice}: {caminho_para_vertice + [vertice]}, Distância: {distancias[vertice]}')
-
+    print(f'Melhor caminho de {origem} para {vertice}: {caminho_para_vertice + [vertice]}, Distância: {distancias[vertice]}')
