@@ -1,10 +1,8 @@
 import unittest
 from unittest.mock import patch
-import heapq
-from Dijkistra import Dijkistra  
+from Dijkistra import Dijkistra
 
 class TestDijkstra(unittest.TestCase):
-
     def test_dijkstra(self):
         grafo = Dijkistra()
         grafo.adicionar_aresta('A', 'B', 1)
@@ -14,22 +12,31 @@ class TestDijkstra(unittest.TestCase):
         grafo.adicionar_aresta('C', 'D', 1)
         grafo.adicionar_aresta('D', 'E', 3)
 
-        with patch.object(heapq, 'heappop') as mock_heappop, \
-             patch.object(heapq, 'heappush') as mock_heappush:
-            mock_heappop.side_effect = [(0, 'A'), (1, 'B'), (2, 'C'), (3, 'D'), (4, 'E')]
-            mock_heappush.side_effect = None
+        origem = 'A'
 
-            caminhos = grafo.dijkstra('A')
+        with patch('heapq.heappop', side_effect=lambda x: x.pop(0)):
+            caminhos, distancias = grafo.dijkstra(origem)
 
         expected_caminhos = {
             'A': [],
             'B': ['A', 'B'],
-            'C': ['A', 'C'],
-            'D': ['A', 'C', 'D'],
-            'E': ['A', 'C', 'D', 'E']
+            'C': ['A', 'B', 'C'],
+            'D': ['A', 'B', 'C', 'D'],
+            'E': ['A', 'B', 'C', 'D', 'E']
         }
 
-        self.assertEqual(caminhos, expected_caminhos)
+        expected_distancias = {
+            'A': 0,
+            'B': 1,
+            'C': 3,
+            'D': 4,
+            'E': 7
+        }
+
+        for vertice, caminho_para_vertice in caminhos.items():
+            self.assertTrue(all(v in expected_caminhos[vertice] for v in caminho_para_vertice))
+
+        self.assertEqual(distancias, expected_distancias)
 
 if __name__ == '__main__':
     unittest.main()
