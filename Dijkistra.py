@@ -33,8 +33,7 @@ class Dijkistra:
                     caminho[vizinho] = caminho[vertice] + [vertice]
                     heapq.heappush(fila, (distancia[vizinho], vizinho))
 
-        return caminho
-
+        return distancia, caminho
 
 
 grafo = Dijkistra()
@@ -46,8 +45,9 @@ grafo.adicionar_aresta('C', 'D', 1)
 grafo.adicionar_aresta('D', 'E', 3)
 
 origem = 'A'
-caminhos = grafo.dijkstra(origem)
+distancias, caminhos = grafo.dijkstra(origem)
 
 for vertice, caminho_para_vertice in caminhos.items():
     print(
         f'Melhor caminho de {origem} para {vertice}: {caminho_para_vertice + [vertice]}, Distância: {distancias[vertice]}')
+

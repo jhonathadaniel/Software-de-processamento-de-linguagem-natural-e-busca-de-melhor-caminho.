@@ -1,5 +1,6 @@
 import pyodbc
 
+
 class ConnectionDataBase:
     def __init__(self, server, database, username, password, driver='{ODBC Driver 17 for SQL Server}'):
         self.server = server
@@ -42,7 +43,6 @@ class ConnectionDataBase:
 
 
 if __name__ == '__main__':
-    # Exemplo de uso da classe
     server = 'DESKTOP-IL70AD8\MSSQLSERVER001'
     database = 'treinos'
     username = 'teste1'
