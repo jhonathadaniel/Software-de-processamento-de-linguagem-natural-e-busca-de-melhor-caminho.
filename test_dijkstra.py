@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import heapq
-from Dijkistra import Dijkistra  # Certifique-se de importar a classe correta
+from Dijkistra import Dijkistra  
 
 class TestDijkstra(unittest.TestCase):
 
